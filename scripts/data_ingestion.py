@@ -66,7 +66,6 @@ def extract_flight_details(flight_data, flight_type, airport_code):
         flight_info.update({
             'scheduled': time_data.get('scheduled', {}).get('arrival' if flight_type == 'arrivals' else 'departure', 'N/A'),
             'estimated': time_data.get('estimated', {}).get('arrival' if flight_type == 'arrivals' else 'departure', 'N/A'),
-            'actual': time_data.get('real', {}).get('arrival' if flight_type == 'arrivals' else 'departure', 'N/A'),
         })
 
         # Airport information
@@ -137,7 +136,6 @@ def extract_data_from_api(data_path):
         filename = data_path
         df.to_csv(filename, index=False, encoding='utf-8')
         print(f"Data saved to {filename}")
-        print(df.columns)
         # Show summary
         print("\n=== SUMMARY ===")
         print(f"Total flights collected: {len(df)}")
@@ -150,7 +148,14 @@ def extract_data_from_api(data_path):
         print(f"\nSample data:")
         print(df[['flight_id', 'flight_number', 'callsign', 'airline', 'airline_iata',
        'airline_icao', 'aircraft_model', 'aircraft_code', 'registration',
-       'status', 'status_category', 'scheduled', 'estimated', 'actual',
+       'status', 'status_category', 'scheduled', 'estimated',
        'origin_airport', 'destination_airport','flight_type', 'data_airport',
        'terminal']].head(10))
-    
+
+        df['delay_minutes'] = (df['estimated'] - df['scheduled']) / 60
+        delayed_flights = df[df['delay_minutes'] != 0]
+        print(delayed_flights[['data_airport', 'delay_minutes']].groupby('data_airport').mean())
+        print(delayed_flights[['data_airport', 'delay_minutes']].describe())
+        print(delayed_flights[['data_airport', 'delay_minutes']].head(10))
+        
+#extract_data_from_api('./data/morocco_flights.csv')

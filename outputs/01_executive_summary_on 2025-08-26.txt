@@ -1,25 +1,25 @@
-🚀 MOROCCO AIRPORT ANALYSIS - BUSINESS INTELLIGENCE REPORT
+MOROCCO AIRPORT ANALYSIS - BUSINESS INTELLIGENCE REPORT
 ================================================================================
-Generated on: 2025-08-23 21:40:18
+Generated on: 2025-08-26
 
 ================================================================================
-MOROCCO AIRPORTS - EXECUTIVE SUMMARY
+MOROCCO AIRPORTS - EXECUTIVE SUMMARY on 2025-08-26
 ================================================================================
-📊 Total Flights Analyzed: 674
-⏰ On-Time Performance: 100.0%
-⏱️  Average Delay (when delayed): nan minutes
-❌ Cancellation Rate: 0.00%
+Total Flights Analyzed: 741
+On-Time Performance: 22.1%
+Average Delay (when delayed): 0 minutes
+Cancellation Rate: 0.00%
 
-🏆 Best Performing Airport: AGA
-    On-Time Rate: 100.0%
+Best Performing Airport: CMN
+    On-Time Rate: 27.6%
 
-📈 Busiest Airport: CMN
-    Total Flights: 20
+Busiest Airport: CMN
+    Total Flights: 21
 
-✈️  Top Airlines by Flight Volume:
-    1. Royal Air Maroc: 194 flights
-    2. Ryanair: 168 flights
-    3. Air Arabia Maroc: 49 flights
+Top Airlines by Flight Volume:
+    1. Ryanair: 197 flights
+    2. Royal Air Maroc: 185 flights
+    3. easyJet: 55 flights
 
 ================================================================================
 
@@ -27,31 +27,31 @@ MOROCCO AIRPORTS - EXECUTIVE SUMMARY
 STRATEGIC BUSINESS INSIGHTS & RECOMMENDATIONS
 ================================================================================
 
-🎯 PERFORMANCE OPTIMIZATION OPPORTUNITIES:
-   • AGA shows highest delay rates - investigate ground operations
-   • AGA demonstrates best practices - replicate across network
+PERFORMANCE OPTIMIZATION OPPORTUNITIES:
+   • TNG shows highest delay rates - investigate ground operations
+   • CMN demonstrates best practices - replicate across network
 
-📈 CAPACITY MANAGEMENT:
+CAPACITY MANAGEMENT:
    • Peak traffic hour: 0:00 - ensure adequate staffing
    • Busiest day: Thursday - optimize resource allocation
 
-💰 REVENUE OPTIMIZATION:
+REVENUE OPTIMIZATION:
    • International flights: 100.0% of total volume
    • Focus on premium international routes for higher margins
 
-⚡ OPERATIONAL EFFICIENCY:
+OPERATIONAL EFFICIENCY:
    • Average terminal utilization: 13 flights per terminal
    • Consider load balancing across terminals during peak hours
 
-👥 CUSTOMER EXPERIENCE:
+CUSTOMER EXPERIENCE:
    • Severe delays (>60min): 0.0% of flights
    • Implement proactive passenger communication systems
 
 ================================================================================
 
-✅ Analysis Complete! All insights and visualizations saved to ./outputs/ folder.
+ Analysis Complete! All insights and visualizations saved to ./outputs/ folder.
 Generated files:
-  - 01_executive_summary_20250823_214018.txt (this file)
-  - 02_airport_performance_dashboard.png
-  - 03_airline_performance_analysis.png
-  - 04_route_destination_analysis.png
+  - 01_executive_summary_2025-08-26.txt (this file)
+  - 02_airport_performance_dashboard_2025-08-26.png
+  - 03_airline_performance_analysis_2025-08-26.png
+  - 04_route_destination_analysis_2025-08-26.png

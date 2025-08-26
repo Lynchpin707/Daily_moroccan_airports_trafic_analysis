@@ -2,9 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from datetime import datetime, timedelta
+from datetime import datetime, date
 import os
 import warnings
+
 warnings.filterwarnings('ignore')
 
 # Create outputs directory if it doesn't exist
@@ -44,14 +45,14 @@ class MoroccoAirportAnalysis:
     def prepare_data(self):
         """Clean and prepare data for analysis"""
         # Convert timestamp columns
-        timestamp_cols = ['scheduled', 'estimated', 'actual', 'data_timestamp']
+        timestamp_cols = ['scheduled', 'estimated', 'data_timestamp']
         for col in timestamp_cols:
             if col in self.df.columns:
                 self.df[col] = pd.to_datetime(self.df[col], errors='coerce')
         
         # Create derived metrics
-        self.df['delay_minutes'] = (self.df['actual'] - self.df['scheduled']).dt.total_seconds() / 60
-        self.df['is_delayed'] = self.df['delay_minutes'] > 15  # Industry standard
+        self.df['delay_minutes'] = (self.df['estimated'] - self.df['scheduled']).dt.total_seconds() / 60
+        self.df['is_delayed'] = self.df['delay_minutes'] != 0
         self.df['is_cancelled'] = self.df['status'].str.lower().str.contains('cancel', na=False)
         self.df['hour'] = self.df['scheduled'].dt.hour
         self.df['day_of_week'] = self.df['scheduled'].dt.day_name()
@@ -67,7 +68,7 @@ class MoroccoAirportAnalysis:
         """Generate executive summary with key business metrics"""
         lines = []
         lines.append("=" * 80)
-        lines.append("MOROCCO AIRPORTS - EXECUTIVE SUMMARY")
+        lines.append(f"MOROCCO AIRPORTS - EXECUTIVE SUMMARY on {date.today()}")
         lines.append("=" * 80)
         
         total_flights = len(self.df)
@@ -75,10 +76,10 @@ class MoroccoAirportAnalysis:
         avg_delay = self.df[self.df['is_delayed']]['delay_minutes'].mean()
         cancellation_rate = self.df['is_cancelled'].mean() * 100
         
-        lines.append(f"📊 Total Flights Analyzed: {total_flights:,}")
-        lines.append(f"⏰ On-Time Performance: {on_time_rate:.1f}%")
-        lines.append(f"⏱️  Average Delay (when delayed): {avg_delay:.0f} minutes")
-        lines.append(f"❌ Cancellation Rate: {cancellation_rate:.2f}%")
+        lines.append(f"Total Flights Analyzed: {total_flights:,}")
+        lines.append(f"On-Time Performance: {on_time_rate:.1f}%")
+        lines.append(f"Average Delay (when delayed): {avg_delay:.0f} minutes")
+        lines.append(f"Cancellation Rate: {cancellation_rate:.2f}%")
         
         # Airport performance
         airport_performance = self.df.groupby('data_airport').agg({
@@ -87,15 +88,15 @@ class MoroccoAirportAnalysis:
         }).round(1)
         airport_performance.columns = ['On_Time_Rate_%', 'Total_Flights']
         
-        lines.append(f"\n🏆 Best Performing Airport: {airport_performance['On_Time_Rate_%'].idxmax()}")
+        lines.append(f"\nBest Performing Airport: {airport_performance['On_Time_Rate_%'].idxmax()}")
         lines.append(f"    On-Time Rate: {airport_performance['On_Time_Rate_%'].max():.1f}%")
         
-        lines.append(f"\n📈 Busiest Airport: {airport_performance['Total_Flights'].idxmax()}")
+        lines.append(f"\nBusiest Airport: {airport_performance['Total_Flights'].idxmax()}")
         lines.append(f"    Total Flights: {airport_performance['Total_Flights'].max():,}")
         
         # Top airlines
         top_airlines = self.df['airline'].value_counts().head(3)
-        lines.append(f"\n✈️  Top Airlines by Flight Volume:")
+        lines.append(f"\nTop Airlines by Flight Volume:")
         for i, (airline, count) in enumerate(top_airlines.items(), 1):
             lines.append(f"    {i}. {airline}: {count:,} flights")
         
@@ -105,8 +106,8 @@ class MoroccoAirportAnalysis:
     
     def plot_airport_performance_dashboard(self):
         """Create comprehensive airport performance dashboard"""
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
-        fig.suptitle('Airport Performance Dashboard - Morocco', fontsize=16, fontweight='bold', y=0.99)
+        fig, (ax1, ax2, ax4) = plt.subplots(3, figsize=(16, 12))
+        fig.suptitle(f'Airport Performance Dashboard - Morocco on {date.today()}', fontsize=16, fontweight='bold', y=0.99)
         
         # 1. Flight volume by airport
         airport_volumes = self.df['data_airport'].value_counts()
@@ -122,7 +123,7 @@ class MoroccoAirportAnalysis:
         for bar in bars1:
             height = bar.get_height()
             ax1.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{int(height):,}', ha='center', va='bottom')
+                    f'{height}', ha='center', va='bottom')
         
         # 2. On-time performance by airport
         otp_by_airport = self.df.groupby('data_airport')['is_delayed'].apply(lambda x: (1-x.mean())*100)
@@ -139,16 +140,9 @@ class MoroccoAirportAnalysis:
         for bar in bars2:
             height = bar.get_height()
             ax2.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{height:.1f}%', ha='center', va='bottom')
+                    f'{height}%', ha='center', va='bottom')
         
-        # 3. Flight distribution by type
-        flight_type_dist = self.df['flight_category'].value_counts()
-        wedges, texts, autotexts = ax3.pie(flight_type_dist.values, 
-                                          labels=flight_type_dist.index,
-                                          autopct='%1.1f%%',
-                                          colors=[colors['secondary'], colors['accent']],
-                                          startangle=90)
-        ax3.set_title('Domestic vs International Flights', fontweight='bold', pad=5)
+        
         
         # 4. Average delay by airport (for delayed flights only)
         delayed_flights = self.df[self.df['is_delayed']]
@@ -164,11 +158,10 @@ class MoroccoAirportAnalysis:
         # Add minute labels
         for bar in bars4:
             height = bar.get_height()
-            ax4.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{int(height)}m', ha='center', va='bottom')
+            ax4.text(bar.get_x() + bar.get_width()/2., height, f'{height}', ha='center', va='bottom')
         
         plt.tight_layout()
-        plt.savefig('./outputs/02_airport_performance_dashboard.png', dpi=300, bbox_inches='tight')
+        plt.savefig(f'./outputs/02_airport_performance_dashboard_{date.today()}.png', dpi=300, bbox_inches='tight')
         plt.close()
     
     
@@ -179,7 +172,7 @@ class MoroccoAirportAnalysis:
         airline_data = self.df[self.df['airline'].isin(top_airlines)]
         
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
-        fig.suptitle('Airline Performance Analysis - Top 10 Airlines', fontsize=16, fontweight='bold', y=0.99)
+        fig.suptitle(f'Airline Performance Analysis - Top 10 Airlines on {date.today()}', fontsize=16, fontweight='bold', y=0.99)
         
         # 1. Flight volume by airline
         airline_volumes = airline_data['airline'].value_counts()
@@ -248,16 +241,16 @@ class MoroccoAirportAnalysis:
         for bar in bars4:
             height = bar.get_height()
             ax4.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{int(height):,}', ha='center', va='bottom')
+                    f'{height}', ha='center', va='bottom')
         
         plt.tight_layout()
-        plt.savefig('./outputs/03_airline_performance_analysis.png', dpi=300, bbox_inches='tight')
+        plt.savefig(f'./outputs/03_airline_performance_analysis_{date.today()}.png', dpi=300, bbox_inches='tight')
         plt.close()
     
     def plot_route_analysis(self):
         """Analyze popular routes and destinations"""
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
-        fig.suptitle('Route and Destination Analysis', fontsize=16, fontweight='bold', y=0.99)
+        fig, (ax1, ax2, ax4) = plt.subplots(3, figsize=(16, 12))
+        fig.suptitle(f'Route and Destination Analysis on {date.today()}', fontsize=16, fontweight='bold', y=0.99)
         
         # 1. Top destinations from Morocco
         top_destinations = self.df['destination_city'].value_counts().head(10)
@@ -287,15 +280,7 @@ class MoroccoAirportAnalysis:
             ax2.text(width, bar.get_y() + bar.get_height()/2.,
                     f'{int(width):,}', ha='left', va='center', fontweight='bold')
         
-        # 3. International vs Domestic by Airport
-        route_analysis = self.df.groupby(['data_airport', 'flight_category']).size().unstack(fill_value=0)
-        route_analysis.plot(kind='bar', stacked=True, ax=ax3, 
-                          color=[colors['primary'], colors['success']], alpha=0.8)
-        ax3.set_title('Domestic vs International Flights by Airport', fontweight='bold', pad=5)
-        ax3.set_xlabel('Airport')
-        ax3.set_ylabel('Number of Flights')
-        ax3.legend(title='Flight Type')
-        ax3.tick_params(axis='x', rotation=45)
+
         
         # 4. Top countries by flight volume
         top_countries = pd.concat([
@@ -314,10 +299,10 @@ class MoroccoAirportAnalysis:
         for bar in bars4:
             height = bar.get_height()
             ax4.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{int(height):,}', ha='center', va='bottom')
+                    f'{height}', ha='center', va='bottom')
         
         plt.tight_layout()
-        plt.savefig('./outputs/04_route_destination_analysis.png', dpi=300, bbox_inches='tight')
+        plt.savefig(f'./outputs/04_route_destination_analysis_{date.today()}.png', dpi=300, bbox_inches='tight')
         plt.close()
     
     def generate_business_insights(self):
@@ -331,7 +316,7 @@ class MoroccoAirportAnalysis:
         worst_performing_airport = self.df.groupby('data_airport')['is_delayed'].mean().idxmax()
         best_performing_airport = self.df.groupby('data_airport')['is_delayed'].mean().idxmin()
         
-        lines.append("\n🎯 PERFORMANCE OPTIMIZATION OPPORTUNITIES:")
+        lines.append("\nPERFORMANCE OPTIMIZATION OPPORTUNITIES:")
         lines.append(f"   • {worst_performing_airport} shows highest delay rates - investigate ground operations")
         lines.append(f"   • {best_performing_airport} demonstrates best practices - replicate across network")
         
@@ -339,25 +324,25 @@ class MoroccoAirportAnalysis:
         busiest_hour = self.df['hour'].mode()[0]
         peak_day = self.df['day_of_week'].mode()[0]
         
-        lines.append(f"\n📈 CAPACITY MANAGEMENT:")
+        lines.append(f"\nCAPACITY MANAGEMENT:")
         lines.append(f"   • Peak traffic hour: {busiest_hour}:00 - ensure adequate staffing")
         lines.append(f"   • Busiest day: {peak_day} - optimize resource allocation")
         
         # Revenue opportunities
         international_pct = (self.df['flight_category'] == 'International').mean() * 100
-        lines.append(f"\n💰 REVENUE OPTIMIZATION:")
+        lines.append(f"\nREVENUE OPTIMIZATION:")
         lines.append(f"   • International flights: {international_pct:.1f}% of total volume")
         lines.append(f"   • Focus on premium international routes for higher margins")
         
         # Operational efficiency
         avg_terminal_utilization = self.df.groupby('terminal')['flight_id'].count().mean()
-        lines.append(f"\n⚡ OPERATIONAL EFFICIENCY:")
+        lines.append(f"\nOPERATIONAL EFFICIENCY:")
         lines.append(f"   • Average terminal utilization: {avg_terminal_utilization:.0f} flights per terminal")
         lines.append(f"   • Consider load balancing across terminals during peak hours")
         
         # Customer experience
         severe_delay_pct = (self.df['delay_minutes'] > 60).mean() * 100
-        lines.append(f"\n👥 CUSTOMER EXPERIENCE:")
+        lines.append(f"\nCUSTOMER EXPERIENCE:")
         lines.append(f"   • Severe delays (>60min): {severe_delay_pct:.1f}% of flights")
         lines.append(f"   • Implement proactive passenger communication systems")
         
@@ -367,13 +352,12 @@ class MoroccoAirportAnalysis:
     
     def save_summary_report(self):
         """Save complete text summary to file"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f'./outputs/01_executive_summary_{timestamp}.txt'
+        filename = f'./outputs/01_executive_summary_on {date.today()}.txt'
         
         with open(filename, 'w', encoding='utf-8') as f:
-            f.write("🚀 MOROCCO AIRPORT ANALYSIS - BUSINESS INTELLIGENCE REPORT\n")
+            f.write("MOROCCO AIRPORT ANALYSIS - BUSINESS INTELLIGENCE REPORT\n")
             f.write("=" * 80 + "\n")
-            f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write(f"Generated on: {date.today()}\n\n")
             
             # Executive summary
             executive_lines = self.executive_summary()
@@ -385,31 +369,31 @@ class MoroccoAirportAnalysis:
             for line in insights_lines:
                 f.write(line + "\n")
             
-            f.write(f"\n✅ Analysis Complete! All insights and visualizations saved to ./outputs/ folder.\n")
+            f.write(f"\n Analysis Complete! All insights and visualizations saved to ./outputs/ folder.\n")
             f.write(f"Generated files:\n")
-            f.write(f"  - 01_executive_summary_{timestamp}.txt (this file)\n")
-            f.write(f"  - 02_airport_performance_dashboard.png\n")
-            f.write(f"  - 03_airline_performance_analysis.png\n")
-            f.write(f"  - 04_route_destination_analysis.png\n")
+            f.write(f"  - 01_executive_summary_{date.today()}.txt (this file)\n")
+            f.write(f"  - 02_airport_performance_dashboard_{date.today()}.png\n")
+            f.write(f"  - 03_airline_performance_analysis_{date.today()}.png\n")
+            f.write(f"  - 04_route_destination_analysis_{date.today()}.png\n")
     
     def run_complete_analysis(self):
         """Execute the complete business analysis and save all outputs"""
-        print("🚀 Starting Morocco Airport Analysis...")
-        print("📁 Creating outputs in ./outputs/ folder...")
+        print("Starting Morocco Airport Analysis...")
+        print("Creating outputs in ./outputs/ folder...")
         
-        print("📊 Generating Airport Performance Dashboard...")
+        print("Generating Airport Performance Dashboard...")
         self.plot_airport_performance_dashboard()
         
-        print("✈️  Evaluating Airline Performance...")
+        print("Evaluating Airline Performance...")
         self.plot_airline_analysis()
         
-        print("🗺️  Examining Route Networks...")
+        print("Examining Route Networks...")
         self.plot_route_analysis()
         
-        print("📝 Generating Executive Summary Report...")
+        print("Generating Executive Summary Report...")
         self.save_summary_report()
         
-        print("\n✅ Analysis Complete! All files saved to ./outputs/ folder:")
+        print("\nAnalysis Complete! All files saved to ./outputs/ folder:")
 
         return "Analysis completed successfully!"
 
@@ -419,3 +403,4 @@ def analyze(data_path):
     analyzer = MoroccoAirportAnalysis(df)
     analyzer.run_complete_analysis()
 
+#analyze('./data/morocco_flights.csv')
