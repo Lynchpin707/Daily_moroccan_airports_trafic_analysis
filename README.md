@@ -1,4 +1,4 @@
-# 🛫 Daily Morocco Airport Traffic Analysis
+# 🛫 Daily Moroccan Airport Traffic Analysis
 ## Project Overview
 
 As a Data Engineering Intern at L'ONDA, I developed a comprehensive analytics pipeline that collects real-time flight data via **FlightRadar24 API** and transforms it into actionable business intelligence for Morocco's major airports.
