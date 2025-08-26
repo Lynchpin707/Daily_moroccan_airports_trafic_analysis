@@ -1,58 +1,65 @@
-# 🛫 Morocco Airport Traffic Intelligence System
-## Data Engineering Project at L'ONDA (Office National Des Aéroports)
+# 🛫 Daily Morocco Airport Traffic Analysis
+## Project Overview
 
+As a Data Engineering Intern at L'ONDA, I developed a comprehensive analytics pipeline that collects real-time flight data via **FlightRadar24 API** and transforms it into actionable business intelligence for Morocco's major airports.
 
- **Real-time airport traffic analytics using FlightRadar24 API for Morocco's top 5 airports, delivering strategic insights for operational optimization.**
-
-## 📋 Project Overview
-
-As a **Data Engineering Intern at L'ONDA**, I developed a comprehensive analytics pipeline that collects real-time flight data via **FlightRadar24 API** and transforms it into actionable business intelligence for Morocco's major airports.
-
-### 🎯 Business Impact
+### Business Impact
 - **Real-time Monitoring**: Live flight tracking and performance analysis
 - **Operational Efficiency**: Identified key bottlenecks and optimization opportunities  
 - **Strategic Planning**: Data-driven insights for capacity and resource allocation
 - **Predictive Analytics**: Traffic forecasting for proactive decision-making
 
-### 🛠️ Technical Stack   
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![FlightRadar24](https://img.shields.io/badge/FlightRadar24-API-red.svg)](https://www.flightradar24.com/)
-[![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-green.svg)](https://pandas.pydata.org/)
-[![Seaborn](https://img.shields.io/badge/Seaborn-Visualization-orange.svg)](https://seaborn.pydata.org/)
+### Technical Stack   
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)](#)
+[![Pandas](https://img.shields.io/badge/Pandas-150458?logo=pandas&logoColor=fff)](#)
+[![Matplotlib](https://custom-icon-badges.demolab.com/badge/Matplotlib-71D291?logo=matplotlib&logoColor=fff)](#)
 
+### Data Source
+The project utilized the FlightRadar24 API as the primary data source, providing
+real-time flight tracking information for aircraft operating in Moroccan airspace. Fligh-
+tRadar24 offers comprehensive coverage of global aviation traffic with high accuracy and
+minimal latency, making it an ideal source for operational analytics.
+<p align="center">
+  <img src="images/flight_radar_logo.png" alt="Flight Radar" width="300"/>
+</p>
 
-## 📊 Key Features & Outputs
+## Key Features & Outputs
 
-### 🔍 **Analytics Suite**
+### **Analytics Suite**
  - **Executive Summary** - KPIs and performance metrics  
  - **Airport Performance Dashboard** - Real-time operational insights  
  - **Operational Patterns Analysis** - Traffic trends and optimization  
  - **Airline Performance Analysis** - Carrier efficiency benchmarking  
  - **Route & Destination Analysis** - Network optimization insights  
 
-### 📈 **Sample Results**
+### **Sample Results**
 ```
 Total Flights Analyzed: 674
 On-Time Performance: 100.0%
 Cancellation Rate: 0.00%
 ```
+### Analysis data pipeline
 
-## 📁 Project Structure
+<p align="center">
+  <img src="images/daily_traffic_analysis_pipeline.png" alt="Pipeline" width="700"/>
+</p>
+
+### Project Structure
 
 ```
 morocco-airport-analytics/
-├── 🔧 src/
+├── src/
 │   ├── airport_analysis.py          # Main analytics engine
 │   ├── flightradar_api.py          # API data collection
-├── 📈 outputs/
+├── outputs/
 │   ├── 01_executive_summary.txt     # Business intelligence report
 │   ├── 02_airport_performance_dashboard.png     # Performance visualizations
 │   ├── 03_airline_performance_analysis.png      # Carrier performance metrics
 │   └── 04_route_destination_analysis.png        # Network optimization insights
-└── 📖 README.md
+└── README.md
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation & Usage
 ```bash
@@ -69,15 +76,15 @@ python run_pipeline.py
 # View results in ./outputs/ folder
 ```
 
-## 🏆 Key Achievements
+## Key Achievements
 
-### 📈 **Technical Excellence**
+### **Technical Excellence**
 - **Real-time Data Pipeline**: FlightRadar24 API integration with 99.9% uptime
 - **100% Data Coverage**: Processed 45K+ flight records across 5 airports
 - **Automated Reporting**: Reduced manual analysis time by 85%
 
 
-## 🎓 Skills Demonstrated
+## Skills Demonstrated
 
 - **API Integration**: Real-time data collection from FlightRadar24
 - **Data Engineering**: ETL pipeline design and optimization
@@ -92,7 +99,7 @@ python run_pipeline.py
 ![Route Analysis](outputs/04_route_destination_analysis.png)
 
 
-## 🤝 L'ONDA Collaboration
+## L'ONDA Collaboration
 
 Working with **Morocco's National Airports Office** provided real-world experience in:
 - Aviation industry data standards and operational challenges
