@@ -96,7 +96,8 @@ python run_pipeline.py
 ## 📊 Sample Visualizations
 
 ### Route & Destination Analysis
-![Route Analysis](outputs/04_route_destination_analysis.png)
+![Airline performance](outputs/03_airline_performance_analysis_2025-08-26.png)
+![AIrport performance](outputs/02_airport_performance_dashboard_2025-08-26.png)
 
 
 ## L'ONDA Collaboration
